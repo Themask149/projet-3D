@@ -4,15 +4,15 @@
 
 // The element of the GUI that are not already stored in other structures
 struct gui_parameters {
-	bool display_frame      = true;
-	bool display_wireframe  = false;
+	bool display_frame = true;
+	bool display_wireframe = false;
 };
 
 
 
 // The structure of the custom scene
 struct scene_structure {
-	
+
 	// ****************************** //
 	// Elements and shapes of the scene
 	// ****************************** //
@@ -21,8 +21,10 @@ struct scene_structure {
 	cgp::scene_environment_basic_camera_spherical_coords environment; // Standard environment controler
 	cgp::inputs_interaction_parameters inputs; // Storage for inputs status (mouse, keyboard, window dimension)
 
-	gui_parameters gui;                       // Standard GUI element storage
-	
+	gui_parameters gui;
+
+	// Standard GUI element storage
+
 	cgp::mesh_drawable terrain;
 	cgp::mesh_drawable ocean;
 	cgp::mesh_drawable tronc;
@@ -32,6 +34,10 @@ struct scene_structure {
 
 	std::vector<cgp::vec3> tree_position;
 	std::vector<cgp::vec3> quad_position;
+
+	cgp::hierarchy_mesh_drawable clock_tower;
+	cgp::timer_basic timer;
+	float rotat;
 
 	// ****************************** //
 	// Functions
