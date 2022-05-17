@@ -11,6 +11,7 @@ float evaluate_terrain_height(float x, float y,int terrain_length);
 	The vertices are sampled along a regular grid structure in (x,y) directions. 
 	The total number of vertices is N*N (N along each direction x/y) 	*/
 cgp::mesh create_terrain_mesh(int N, float length);
+cgp::mesh create_ocean_mesh(int N, float length);
 
 std::vector<cgp::vec3> generate_positions_on_terrain(int N, float terrain_length);
 

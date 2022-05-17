@@ -20,6 +20,10 @@ void scene_structure::initialize()
 	terrain.initialize(terrain_mesh, "terrain");
 	terrain.shading.color = { 0.6f,0.85f,0.5f };
 	terrain.shading.phong.specular = 0.0f; // non-specular terrain material
+	mesh const ocean_mesh = create_ocean_mesh(N_terrain_samples, terrain_length);
+	ocean.initialize(ocean_mesh, "ocean");
+	GLuint const ocean_text = opengl_load_texture_image("textures/water.jpg", GL_REPEAT, GL_REPEAT);
+	ocean.texture = ocean_text;
 
 	/*
 	mesh const tree_mesh = create_tree();
@@ -27,14 +31,14 @@ void scene_structure::initialize()
 	tree_position = generate_positions_on_terrain(50,terrain_length);
 	GLuint const terrain_text = opengl_load_texture_image("texture_grass.jpg", GL_REPEAT, GL_REPEAT);
 	terrain.texture = terrain_text;
-
+	*/
 	mesh quad_mesh= mesh_primitive_quadrangle({ -0.5f,0,0 }, { 0.5f,0,0 }, { 0.5f,0,1 }, { -0.5f,0,1 });
 	quad.initialize(quad_mesh, "billboard");
-	quad_position = generate_positions_on_terrain(100, terrain_length);
-	quad.texture = opengl_load_texture_image("grass.png");
+	quad_position = generate_positions_on_terrain(10000, terrain_length);
+	quad.texture = opengl_load_texture_image("textures/grass.png");
 	quad.shading.phong = { 0.4f,0.6f,0,1 };
 
-	*/
+	
 
 }
 
@@ -50,13 +54,14 @@ void scene_structure::display()
 		draw(global_frame, environment);
 
 	draw(terrain, environment);
+	draw(ocean, environment);
 	/*
 	for (int i = 0; i < 5; i++) {
 		tree.transform.translation = tree_position[i];
 		draw(tree, environment);
 
 	}
-	
+	*/
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -79,7 +84,7 @@ void scene_structure::display()
 	}
 	glDepthMask(true);
 	glDisable(GL_BLEND);
-	*/
+	
 	if (gui.display_wireframe) {
 		draw_wireframe(terrain, environment);
 		/*draw_wireframe(tree, environment);*/

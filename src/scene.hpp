@@ -24,6 +24,7 @@ struct scene_structure {
 	gui_parameters gui;                       // Standard GUI element storage
 	
 	cgp::mesh_drawable terrain;
+	cgp::mesh_drawable ocean;
 	cgp::mesh_drawable tronc;
 	cgp::mesh_drawable cone;
 	cgp::mesh_drawable tree;
