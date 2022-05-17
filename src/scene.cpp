@@ -15,7 +15,7 @@ void scene_structure::initialize()
 	environment.camera.look_at({ 15.0f,6.0f,6.0f }, { 0,0,0 });
 
 	int N_terrain_samples = 200;
-	float terrain_length = 100;
+	float terrain_length = 200;
 	mesh const terrain_mesh = create_terrain_mesh(N_terrain_samples, terrain_length);
 	terrain.initialize(terrain_mesh, "terrain");
 	terrain.shading.color = { 0.6f,0.85f,0.5f };
@@ -36,6 +36,30 @@ void scene_structure::initialize()
 
 	*/
 
+	// clock tower
+	mesh_drawable cube_base;
+	mesh_drawable cube_2;
+	mesh_drawable cylinder;
+	mesh_drawable aiguille;
+	mesh_drawable toit;
+
+	cube_base.initialize(mesh_primitive_cube(), "Cube base"); cube_base.transform.scaling = 2.f;
+	cube_2.initialize(mesh_primitive_cube(), "Cube 2"); cube_2.transform.scaling = 2.f;
+	cylinder.initialize(mesh_primitive_cylinder(0.6f, { 0.1f,0,0 }, { 0,0,0 }, 10, 40, true), "Cylinder clock");
+	aiguille.initialize(mesh_primitive_cylinder(0.02f, { 0,0,0 }, { 0,0,0.55f }, 10, 20, true), "Aiguille");
+	toit.initialize(mesh_primitive_cone(1.8f, 1.8f, { 0,0,0 }, {0, 0, 1}, true));
+
+	GLuint const text_tuile = opengl_load_texture_image("textures/tuile.jpg", GL_REPEAT, GL_REPEAT);
+	toit.texture = text_tuile;
+	GLuint const text_brique = opengl_load_texture_image("textures/brique.jpg", GL_REPEAT, GL_REPEAT);
+	cube_base.texture = text_brique;
+	cube_2.texture = text_brique;
+
+	clock_tower.add(cube_base);
+	clock_tower.add(cube_2, "Cube base", { 0,0,2.f });
+	clock_tower.add(cylinder, "Cube 2", { 1.f,0,0 });
+	clock_tower.add(aiguille, "Cylinder clock", { 0.1f,0,0 });
+	clock_tower.add(toit, "Cube 2", { 0,0,1.f });
 }
 
 
@@ -49,14 +73,21 @@ void scene_structure::display()
 	if (gui.display_frame)
 		draw(global_frame, environment);
 
+	//timer.update();
+	clock_tower["Aiguille"].transform.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, -3 * rotat);
+	clock_tower.update_local_to_global_coordinates();
+	clock_tower["Cube base"].transform.translation = vec3{2,2,14};
+
 	draw(terrain, environment);
+	draw(clock_tower, environment);
+
 	/*
 	for (int i = 0; i < 5; i++) {
 		tree.transform.translation = tree_position[i];
 		draw(tree, environment);
 
 	}
-	
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -72,7 +103,7 @@ void scene_structure::display()
 		// Re-orient the grass shape to always face the camera direction
 
 		// Rotation such that R*{1,0,0} = right-direction, R*{0,1,0} = front-direction
-		
+
 		quad.transform.rotation = R;
 		draw(quad, environment);
 
@@ -96,6 +127,8 @@ void scene_structure::display_gui()
 {
 	ImGui::Checkbox("Frame", &gui.display_frame);
 	ImGui::Checkbox("Wireframe", &gui.display_wireframe);
+	ImGui::SliderFloat("Hour", &rotat, 0, 2.f);
+
 }
 
 
