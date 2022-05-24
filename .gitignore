@@ -7,3 +7,5 @@ projet.pdb
 imgui.ini
 Makefile
 */**/*.o
+*.exe
+*.pdb
