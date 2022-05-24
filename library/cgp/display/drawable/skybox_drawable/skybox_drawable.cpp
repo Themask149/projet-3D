@@ -9,13 +9,18 @@ namespace cgp {
 			vec3 position;
 		} fragment;
 
+		uniform float rotat;
+
 		layout(location=0) out vec4 FragColor;
 
 		uniform samplerCube image_texture;
 
 		void main()
 		{
-			FragColor = texture(image_texture, fragment.position);
+			float modif;
+			if(sin(3*rotat)<0.1) modif = 0.1;
+			else modif=sin(3*rotat)+0.1;
+			FragColor = texture(image_texture, fragment.position) * modif;
 		}
 		)";
 

@@ -19,6 +19,7 @@ uniform sampler2D image_texture;
 
 // Uniform values - must be send from the C++ code
 uniform vec3 light; // position of the light
+uniform float rotat;
 
 // Shape color
 uniform vec3 color;   // Uniform color of the object
@@ -34,7 +35,7 @@ uniform mat4 view;       // View matrix (rigid transform) of the camera - to com
 
 void main()
 {
-
+	
 	// Compute the position of the center of the camera
 	mat3 O = transpose(mat3(view));                   // get the orientation matrix
 	vec3 last_col = vec3(view*vec4(0.0, 0.0, 0.0, 1.0)); // get the last column
@@ -84,7 +85,10 @@ void main()
 	vec3 color_object  = fragment.color * color * color_image_texture.rgb;
 
 	// Compute the final shaded color using Phong model
-	vec3 color_shading = (Ka + Kd * diffuse) * color_object + Ks * specular * vec3(1.0, 1.0, 1.0);
+	float modif;
+	if(sin(3*rotat)<0.1) modif = 0.4;
+	else modif=2*sin(3*rotat)+0.15;
+	vec3 color_shading = (Ka * modif + Kd * diffuse) * color_object + Ks * specular * vec3(1.0, 1.0, 1.0);
 	
 	// Output color, with the alpha component
 	FragColor = vec4(color_shading, alpha * color_image_texture.a);

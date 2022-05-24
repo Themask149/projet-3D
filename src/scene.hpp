@@ -8,7 +8,8 @@ struct gui_parameters {
 	bool display_wireframe = false;
 };
 
-
+struct environment_custom:cgp::scene_environment_basic_camera_spherical_coords { float rotat; };
+void opengl_uniform(GLuint shader, environment_custom const& scene_environment);
 
 // The structure of the custom scene
 struct scene_structure {
@@ -18,7 +19,7 @@ struct scene_structure {
 	// ****************************** //
 
 	cgp::mesh_drawable global_frame;          // The standard global frame
-	cgp::scene_environment_basic_camera_spherical_coords environment; // Standard environment controler
+	environment_custom environment; // Standard environment controler
 	cgp::inputs_interaction_parameters inputs; // Storage for inputs status (mouse, keyboard, window dimension)
 
 	gui_parameters gui;
@@ -31,13 +32,15 @@ struct scene_structure {
 	cgp::mesh_drawable cone;
 	cgp::mesh_drawable tree;
 	cgp::mesh_drawable quad;
+	cgp::mesh_drawable sun;
+	cgp::skybox_drawable skybox;
 
 	std::vector<cgp::vec3> tree_position;
 	std::vector<cgp::vec3> quad_position;
 
 	cgp::hierarchy_mesh_drawable clock_tower;
 	cgp::timer_basic timer;
-	float rotat;
+	
 
 	// ****************************** //
 	// Functions

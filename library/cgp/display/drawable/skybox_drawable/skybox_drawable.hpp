@@ -30,6 +30,7 @@ namespace cgp {
 		glUseProgram(skybox.shader); opengl_check;
 
 		// Send uniforms for this shader
+		opengl_uniform(skybox.shader, environment);
 		opengl_uniform(skybox.shader, "projection", environment.projection.matrix());
 		opengl_uniform(skybox.shader, "view", environment.camera.matrix_view());
 		opengl_uniform(skybox.shader, "model", skybox.model_matrix());

@@ -5,6 +5,12 @@
 
 using namespace cgp;
 
+void opengl_uniform(GLuint shader, environment_custom const& scene_environment) { //permet d'utiliser rotat dans les shaders
+	opengl_uniform(shader, cgp::scene_environment_basic_camera_spherical_coords(scene_environment));
+	cgp::opengl_uniform(shader, "rotat", scene_environment.rotat);
+}
+
+
 void scene_structure::initialize()
 {
 	// Basic set-up
@@ -20,6 +26,7 @@ void scene_structure::initialize()
 	terrain.initialize(terrain_mesh, "terrain");
 	terrain.shading.color = { 0.6f,0.85f,0.5f };
 	terrain.shading.phong.specular = 0.0f; // non-specular terrain material
+	terrain.shading.phong.ambient = 0.2;
 	mesh const ocean_mesh = create_ocean_mesh(N_terrain_samples, terrain_length);
 	ocean.initialize(ocean_mesh, "ocean");
 	GLuint const ocean_text = opengl_load_texture_image("textures/water.jpg", GL_REPEAT, GL_REPEAT);
@@ -38,6 +45,14 @@ void scene_structure::initialize()
 	quad.texture = opengl_load_texture_image("textures/grass.png");
 	quad.shading.phong = { 0.4f,0.6f,0,1 };
 
+
+	//skybox
+	skybox.initialize("textures/skybox/");
+
+	sun.initialize(mesh_primitive_sphere(1.f, { 0,0,0 }));
+	GLuint const text_sun = opengl_load_texture_image("textures/sun.jpg", GL_REPEAT, GL_REPEAT);
+	sun.texture = text_sun;
+	sun.shading.phong.ambient = 1;
 	
 
 	// clock tower
@@ -51,7 +66,7 @@ void scene_structure::initialize()
 	cube_2.initialize(mesh_primitive_cube(), "Cube 2"); cube_2.transform.scaling = 2.f;
 	cylinder.initialize(mesh_primitive_cylinder(0.6f, { 0.1f,0,0 }, { 0,0,0 }, 10, 40, true), "Cylinder clock");
 	aiguille.initialize(mesh_primitive_cylinder(0.02f, { 0,0,0 }, { 0,0,0.55f }, 10, 20, true), "Aiguille");
-	toit.initialize(mesh_primitive_cone(1.8f, 1.8f, { 0,0,0 }, {0, 0, 1}, true));
+	toit.initialize(mesh_primitive_cone(1.8f, 1.8f, { 0,0,0 }, {0, 0, 1}, true), "Toit");
 
 	GLuint const text_tuile = opengl_load_texture_image("textures/tuile.jpg", GL_REPEAT, GL_REPEAT);
 	toit.texture = text_tuile;
@@ -70,21 +85,25 @@ void scene_structure::initialize()
 
 void scene_structure::display()
 {
-
-
+	
+	draw(skybox, environment); //doit etre draw en tout premier
 	// Basic elements of the scene
-	environment.light = environment.camera.position();
+	//environment.light = environment.camera.position();
+	environment.light = { 100 * cos(3 * environment.rotat),0,100 * sin(3 * environment.rotat) }; //coordonnées du soleil
 	if (gui.display_frame)
 		draw(global_frame, environment);
 
 	//timer.update();
-	clock_tower["Aiguille"].transform.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, -3 * rotat);
+	clock_tower["Aiguille"].transform.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, -3 * environment.rotat);
 	clock_tower.update_local_to_global_coordinates();
 	clock_tower["Cube base"].transform.translation = vec3{2,2,14};
 
 	draw(terrain, environment);
 	draw(ocean, environment);
 	draw(clock_tower, environment);
+	sun.transform.translation = { 100 * cos(3* environment.rotat),0,100 * sin(3* environment.rotat) };
+	draw(sun, environment);
+	sun.transform.translation = { -100 * cos(3* environment.rotat),0,100 * -sin(3* environment.rotat) };
 
 	/*
 	for (int i = 0; i < 5; i++) {
@@ -132,7 +151,7 @@ void scene_structure::display_gui()
 {
 	ImGui::Checkbox("Frame", &gui.display_frame);
 	ImGui::Checkbox("Wireframe", &gui.display_wireframe);
-	ImGui::SliderFloat("Hour", &rotat, 0, 2.f);
+	ImGui::SliderFloat("Hour", &environment.rotat, 0, 2.f);
 
 }
 
