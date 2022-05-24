@@ -19,7 +19,7 @@ float evaluate_terrain_height(float x, float y,float terrain_length)
 }
 
 float evaluate_ocean_height(float x, float y, float terrain_length) {
-    float const noise = noise_perlin({ x / terrain_length + 0.5f,y / terrain_length + 0.5f }, 4, 0.35f, 3.f);
+    float const noise = noise_perlin({ x / terrain_length + 0.5f,y / terrain_length + 0.5f }, 4, 1.f, 3.f);
     return (1 - std::sin( x/10 + y/10)) * noise/2 +3;
 }
 
@@ -129,14 +129,17 @@ std::vector<cgp::vec3> generate_positions_on_terrain(int N, float terrain_length
 {
     std::vector<cgp::vec3> pos;
     pos.resize(N);
-    for (int i = 0; i < N; i++) {
-        float x = rand_interval(-terrain_length/8, terrain_length/4);
-        float y = rand_interval(-terrain_length / 4, terrain_length / 4);
+    int i = 0;
+    while (i!=N){
+        float x = rand_interval(-terrain_length/8, terrain_length/8);
+        float y = rand_interval(-terrain_length / 8, terrain_length / 8);
         if (evaluate_terrain_height(x, y, terrain_length) > evaluate_ocean_height(x, y, terrain_length)){
             pos[i] = vec3(x, y, evaluate_terrain_height(x, y, terrain_length));
+            i++;
         }
         
-    }
+        
+    };
     return pos;
 
 }

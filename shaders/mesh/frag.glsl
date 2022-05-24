@@ -16,6 +16,7 @@ layout(location=0) out vec4 FragColor;
 
 // Texture image
 uniform sampler2D image_texture;
+uniform sampler2D image_texture_1;
 
 // Uniform values - must be send from the C++ code
 uniform vec3 light; // position of the light
@@ -75,19 +76,21 @@ void main()
 
 	// Get the current texture color
 	vec4 color_image_texture = texture(image_texture, uv_image);
+	float texture_alpha;
 
 
 	// Compute Shading
 	// ************************* //
 
 	// Compute the base color of the object based on: vertex color, uniform color, and texture
-	vec3 color_object  = fragment.color * color * color_image_texture.rgb;
-
+	
+	vec3 color_object;
+	color_object  = fragment.color * color * color_image_texture.rgb;
+	texture_alpha = color_image_texture.a;
+	
 	// Compute the final shaded color using Phong model
 	vec3 color_shading = (Ka + Kd * diffuse) * color_object + Ks * specular * vec3(1.0, 1.0, 1.0);
 	
 	// Output color, with the alpha component
-	FragColor = vec4(color_shading, alpha * color_image_texture.a);
-
-
+	FragColor = vec4(color_shading, alpha * texture_alpha);
 }

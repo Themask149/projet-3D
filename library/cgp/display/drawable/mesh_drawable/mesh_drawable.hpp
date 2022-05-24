@@ -27,6 +27,7 @@ namespace cgp
 		GLuint number_triangles;
 		GLuint shader;
 		GLuint texture;
+		GLuint texture_1 = 0;
 
 		// Uniform
 		affine_rts transform;
@@ -93,6 +94,11 @@ namespace cgp
 		glActiveTexture(GL_TEXTURE0); opengl_check;
 		glBindTexture(GL_TEXTURE_2D, drawable.texture); opengl_check;
 		opengl_uniform(drawable.shader, "image_texture", 0);  opengl_check;
+
+
+		glActiveTexture(GL_TEXTURE1); opengl_check;
+		glBindTexture(GL_TEXTURE_2D, drawable.texture_1); opengl_check;
+		opengl_uniform(drawable.shader, "image_texture_1", 1);  opengl_check;
 		
 		// Call draw function
 		assert_cgp(drawable.number_triangles>0, "Try to draw mesh_drawable with 0 triangles [name:"+ drawable.name+"]"); opengl_check;

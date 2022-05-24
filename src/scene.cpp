@@ -10,20 +10,30 @@ void scene_structure::initialize()
 	// Basic set-up
 	// ***************************************** //
 
+	GLuint const shader_deformation = opengl_load_shader("shaders/deformation/vert.glsl", "shaders/deformation/frag.glsl");
+	GLuint const shader_terrain = opengl_load_shader("shaders/terrain/vert.glsl", "shaders/terrain/frag.glsl");
+
 	global_frame.initialize(mesh_primitive_frame(), "Frame");
-	environment.camera.axis = camera_spherical_coordinates_axis::z;
+	environment.camera.axis= camera_spherical_coordinates_axis::z;
 	environment.camera.look_at({ 15.0f,6.0f,6.0f }, { 0,0,0 });
 
-	int N_terrain_samples = 200;
-	float terrain_length = 200;
+	int N_terrain_samples = 300;
+	float terrain_length = 300;
 	mesh const terrain_mesh = create_terrain_mesh(N_terrain_samples, terrain_length);
 	terrain.initialize(terrain_mesh, "terrain");
 	terrain.shading.color = { 0.6f,0.85f,0.5f };
 	terrain.shading.phong.specular = 0.0f; // non-specular terrain material
-	mesh const ocean_mesh = create_ocean_mesh(N_terrain_samples, terrain_length);
+	GLuint const terrain_text = opengl_load_texture_image("textures/sand.jpg", GL_REPEAT, GL_REPEAT);
+	GLuint const herb_text = opengl_load_texture_image("textures/texture_grass.jpg", GL_REPEAT, GL_REPEAT);
+	terrain.texture_1 = terrain_text;
+	terrain.texture = herb_text;
+	terrain.shader = shader_terrain;
+
+	ocean_mesh = create_ocean_mesh(N_terrain_samples, terrain_length);
 	ocean.initialize(ocean_mesh, "ocean");
 	GLuint const ocean_text = opengl_load_texture_image("textures/water.jpg", GL_REPEAT, GL_REPEAT);
 	ocean.texture = ocean_text;
+	ocean.shader = shader_deformation;
 
 	/*
 	mesh const tree_mesh = create_tree();
@@ -34,7 +44,7 @@ void scene_structure::initialize()
 	*/
 	mesh quad_mesh= mesh_primitive_quadrangle({ -0.5f,0,0 }, { 0.5f,0,0 }, { 0.5f,0,1 }, { -0.5f,0,1 });
 	quad.initialize(quad_mesh, "billboard");
-	quad_position = generate_positions_on_terrain(10000, terrain_length);
+	quad_position = generate_positions_on_terrain(300, terrain_length);
 	quad.texture = opengl_load_texture_image("textures/grass.png");
 	quad.shading.phong = { 0.4f,0.6f,0,1 };
 
@@ -58,7 +68,6 @@ void scene_structure::initialize()
 	GLuint const text_brique = opengl_load_texture_image("textures/brique.jpg", GL_REPEAT, GL_REPEAT);
 	cube_base.texture = text_brique;
 	cube_2.texture = text_brique;
-
 	clock_tower.add(cube_base);
 	clock_tower.add(cube_2, "Cube base", { 0,0,2.f });
 	clock_tower.add(cylinder, "Cube 2", { 1.f,0,0 });
@@ -67,10 +76,10 @@ void scene_structure::initialize()
 }
 
 
-
 void scene_structure::display()
 {
-
+	timer.update();
+	float t = timer.t;
 
 	// Basic elements of the scene
 	environment.light = environment.camera.position();
@@ -81,7 +90,8 @@ void scene_structure::display()
 	clock_tower["Aiguille"].transform.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, -3 * rotat);
 	clock_tower.update_local_to_global_coordinates();
 	clock_tower["Cube base"].transform.translation = vec3{2,2,14};
-
+	
+	environment.update(t);
 	draw(terrain, environment);
 	draw(ocean, environment);
 	draw(clock_tower, environment);
@@ -93,6 +103,7 @@ void scene_structure::display()
 
 	}
 	*/
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -103,7 +114,7 @@ void scene_structure::display()
 	vec3 const front = normalize(environment.camera.front() * vec3 { 1, 1, 0 }); // front-vector of the camera without z-component
 	vec3 const right = environment.camera.right();
 	rotation_transform R = rotation_transform::between_vector({ 1,0,0 }, { 0,1,0 }, right, front);
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 300; i++) {
 		quad.transform.translation = quad_position[i];
 		// Re-orient the grass shape to always face the camera direction
 
@@ -116,6 +127,7 @@ void scene_structure::display()
 	glDepthMask(true);
 	glDisable(GL_BLEND);
 	
+
 	if (gui.display_wireframe) {
 		draw_wireframe(terrain, environment);
 		/*draw_wireframe(tree, environment);*/
