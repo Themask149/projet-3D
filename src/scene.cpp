@@ -29,8 +29,7 @@ void scene_structure::initialize()
 	terrain.initialize(terrain_mesh, "terrain");
 	terrain.shading.color = { 0.6f,0.85f,0.5f };
 	terrain.shading.phong.specular = 0.0f; // non-specular terrain material
-	terrain.shading.phong.ambient = 0.2;
-	mesh const ocean_mesh = create_ocean_mesh(N_terrain_samples, terrain_length);
+	terrain.shading.phong.ambient = 0.2f;
 	GLuint const terrain_text = opengl_load_texture_image("textures/sand.jpg", GL_REPEAT, GL_REPEAT);
 	GLuint const herb_text = opengl_load_texture_image("textures/texture_grass.jpg", GL_REPEAT, GL_REPEAT);
 	terrain.texture_1 = terrain_text;

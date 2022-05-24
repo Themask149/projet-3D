@@ -9,6 +9,7 @@ struct scene_environment_with_shader_deformation : cgp::scene_environment_basic_
 {
 	cgp::vec3 light; // position of the light
 	float t;         // The time is sent to the shader to compute a procedural deformation
+	float rotat;
 
 	void update(float t); // function to be called in the scene display - update the time t and the light position
 };
