@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cgp/cgp.hpp"
+#include "deformation/deformation.hpp"
 
 // The element of the GUI that are not already stored in other structures
 struct gui_parameters {
@@ -19,12 +20,14 @@ struct scene_structure {
 	// ****************************** //
 
 	cgp::mesh_drawable global_frame;          // The standard global frame
-	environment_custom environment; // Standard environment controler
+	scene_environment_with_shader_deformation environment; // Standard environment controler
 	cgp::inputs_interaction_parameters inputs; // Storage for inputs status (mouse, keyboard, window dimension)
 
 	gui_parameters gui;
 
 	// Standard GUI element storage
+
+	cgp::mesh ocean_mesh;
 
 	cgp::mesh_drawable terrain;
 	cgp::mesh_drawable ocean;
@@ -49,7 +52,7 @@ struct scene_structure {
 	void initialize();  // Standard initialization to be called before the animation loop
 	void display();     // The frame display to be called within the animation loop
 	void display_gui(); // The display of the GUI, also called within the animation loop
-
+	void wave_update(cgp::mesh& mesh_shape, cgp::mesh_drawable& drawable, float t);
 
 };
 
