@@ -3,6 +3,7 @@
 #include "terrain.hpp"
 #include "tree.hpp"
 
+
 using namespace cgp;
 
 void opengl_uniform(GLuint shader, environment_custom const& scene_environment) { //permet d'utiliser rotat dans les shaders
@@ -21,7 +22,7 @@ void scene_structure::initialize()
 
 	global_frame.initialize(mesh_primitive_frame(), "Frame");
 	environment.camera.axis= camera_spherical_coordinates_axis::z;
-	environment.camera.look_at({ 15.0f,6.0f,6.0f }, { 0,0,0 });
+	environment.camera.look_at({ 15.0f,6.0f,16.0f }, { 0,2,16 });
 
 	int N_terrain_samples = 300;
 	float terrain_length = 300;
@@ -54,12 +55,13 @@ void scene_structure::initialize()
 	quad_position = generate_positions_on_terrain(300, terrain_length);
 	quad.texture = opengl_load_texture_image("textures/grass.png");
 	quad.shading.phong = { 0.4f,0.6f,0,1 };
+	quad.shading.phong.ambient -= 0.2;
 
 
 	//skybox
 	skybox.initialize("textures/skybox/");
 
-	sun.initialize(mesh_primitive_sphere(1.f, { 0,0,0 }));
+	sun.initialize(mesh_primitive_sphere(5.f, { 0,0,0 }));
 	GLuint const text_sun = opengl_load_texture_image("textures/sun.jpg", GL_REPEAT, GL_REPEAT);
 	sun.texture = text_sun;
 	sun.shading.phong.ambient = 1;
@@ -74,7 +76,7 @@ void scene_structure::initialize()
 
 	cube_base.initialize(mesh_primitive_cube(), "Cube base"); cube_base.transform.scaling = 2.f;
 	cube_2.initialize(mesh_primitive_cube(), "Cube 2"); cube_2.transform.scaling = 2.f;
-	cylinder.initialize(mesh_primitive_cylinder(0.6f, { 0.1f,0,0 }, { 0,0,0 }, 10, 40, true), "Cylinder clock");
+	cylinder.initialize(mesh_primitive_cylinder(0.6f, { -0.1f,0,0 }, { 0,0,0 }, 10, 40, true), "Cylinder clock");
 	aiguille.initialize(mesh_primitive_cylinder(0.02f, { 0,0,0 }, { 0,0,0.55f }, 10, 20, true), "Aiguille");
 	toit.initialize(mesh_primitive_cone(1.8f, 1.8f, { 0,0,0 }, {0, 0, 1}, true), "Toit");
 
@@ -85,9 +87,18 @@ void scene_structure::initialize()
 	cube_2.texture = text_brique;
 	clock_tower.add(cube_base);
 	clock_tower.add(cube_2, "Cube base", { 0,0,2.f });
-	clock_tower.add(cylinder, "Cube 2", { 1.f,0,0 });
-	clock_tower.add(aiguille, "Cylinder clock", { 0.1f,0,0 });
+	cylinder.shading.phong.diffuse -= 0.2f;
+	clock_tower.add(cylinder, "Cube 2", { 1.1f,0,0 });
+	aiguille.shading.color = { 0.f,0.f,0.f };
+	clock_tower.add(aiguille, "Cylinder clock", { 0.f,0,0 });
 	clock_tower.add(toit, "Cube 2", { 0,0,1.f });
+
+
+	mesh mesh_boat = mesh_load_file_obj("assets/boat.obj");
+	boat.initialize(mesh_boat,"boat");
+	boat.transform.scaling = 0.02f;
+	boat.transform.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 3.14159265358979/2);
+	boat.transform.translation = { -2,-13,5.1f };
 }
 
 
@@ -100,7 +111,7 @@ void scene_structure::display()
 
 	// Basic elements of the scene
 	//environment.light = environment.camera.position();
-	environment.light = { 100 * cos(3 * environment.rotat),0,100 * sin(3 * environment.rotat) }; //coordonn�es du soleil
+	environment.light = { 150 * cos(3 * environment.rotat),0,150 * sin(3 * environment.rotat) }; //coordonn�es du soleil
 	if (gui.display_frame)
 		draw(global_frame, environment);
 
@@ -113,10 +124,9 @@ void scene_structure::display()
 	draw(terrain, environment);
 	draw(ocean, environment);
 	draw(clock_tower, environment);
-	sun.transform.translation = { 100 * cos(3* environment.rotat),0,100 * sin(3* environment.rotat) };
+	sun.transform.translation = { 150 * cos(3* environment.rotat),0,150 * sin(3* environment.rotat) };
 	draw(sun, environment);
-	sun.transform.translation = { -100 * cos(3* environment.rotat),0,100 * -sin(3* environment.rotat) };
-
+	draw(boat, environment);
 	/*
 	for (int i = 0; i < 5; i++) {
 		tree.transform.translation = tree_position[i];
@@ -165,7 +175,7 @@ void scene_structure::display_gui()
 {
 	ImGui::Checkbox("Frame", &gui.display_frame);
 	ImGui::Checkbox("Wireframe", &gui.display_wireframe);
-	ImGui::SliderFloat("Hour", &environment.rotat, 0, 2.f);
+	ImGui::SliderFloat("Hour", &environment.rotat, 0, 1.1f);
 
 }
 

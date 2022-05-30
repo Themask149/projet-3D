@@ -24,14 +24,14 @@ void main()
 {
 	vec3 p0 = position.xyz;
 	float d = sqrt(p0.x*p0.x+p0.y*p0.y);
-	float omega = -d - 3*time;
+	float omega = -0.5*d - 3*time;
 
-	// Procedural deformation: z = 0.05*cos( (x^2+y^2)^0.5 - 3*t );
+	// Procedural deformation: z = 0.05*cos( 0.5*(x^2+y^2)^0.5 - 3*t );
 	vec3 p = vec3(p0.x, p0.y, 0.2*cos(omega) + p0.z  );
 
 	// Compute exact normals after deformation
-	vec3 dpdx = vec3(1, 0, -0.2*p0.x/sqrt(d)*sin(omega) );
-	vec3 dpdy = vec3(0, 1, -0.2*p0.x/sqrt(d)*sin(omega) );
+	vec3 dpdx = vec3(1, 0, 0.2*p0.x/sqrt(d)*sin(omega) );
+	vec3 dpdy = vec3(0, 1, 0.2*p0.x/sqrt(d)*sin(omega) );
 	vec3 n = normalize(cross(dpdx,dpdy));
 
 	fragment.position = vec3(model * vec4(p,1.0));

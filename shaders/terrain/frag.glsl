@@ -20,6 +20,7 @@ uniform sampler2D image_texture_1;
 
 // Uniform values - must be send from the C++ code
 uniform vec3 light; // position of the light
+uniform float rotat;
 
 // Shape color
 uniform vec3 color;   // Uniform color of the object
@@ -54,7 +55,8 @@ void main()
 	// ************************* //
 
 	// Unit direction toward the light
-	vec3 L = normalize(light-fragment.position);
+	vec3 lsun = { 150 * cos(3* rotat),0,150 * sin(3* rotat) };
+	vec3 L = normalize(lsun-fragment.position);
 
 	// Diffuse coefficient
 	float diffuse = max(dot(N,L),0.0);
@@ -65,6 +67,7 @@ void main()
 		vec3 R = reflect(-L,N); // symetric of light-direction with respect to the normal
 		vec3 V = normalize(camera_position-fragment.position);
 		specular = pow( max(dot(R,V),0.0), specular_exp );
+	if(sin(3* rotat)<=0.1f) specular=10*sin(3* rotat)*specular;
 	}
 
 	// Texture
@@ -95,7 +98,10 @@ void main()
 		texture_alpha = color_image_texture.a;
 	}
 	// Compute the final shaded color using Phong model
-	vec3 color_shading = (Ka + Kd * diffuse) * color_object + Ks * specular * vec3(1.0, 1.0, 1.0);
+	float modif;
+	if(sin(3*rotat)<0.2) modif = 0.2;
+	else modif=sin(3*rotat);
+	vec3 color_shading = (Ka + Kd * diffuse * modif) * color_object + Ks * specular * vec3(1.0, 1.0, 1.0);
 	
 	// Output color, with the alpha component
 	FragColor = vec4(color_shading, alpha * texture_alpha);

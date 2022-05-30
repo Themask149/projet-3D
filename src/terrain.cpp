@@ -131,8 +131,8 @@ std::vector<cgp::vec3> generate_positions_on_terrain(int N, float terrain_length
     pos.resize(N);
     int i = 0;
     while (i!=N){
-        float x = rand_interval(-terrain_length/8, terrain_length/8);
-        float y = rand_interval(-terrain_length / 8, terrain_length / 8);
+        float x = rand_interval(-terrain_length/12, terrain_length/12);
+        float y = rand_interval(-terrain_length / 12, terrain_length / 12);
         if (evaluate_terrain_height(x, y, terrain_length) > evaluate_ocean_height(x, y, terrain_length)){
             pos[i] = vec3(x, y, evaluate_terrain_height(x, y, terrain_length));
             i++;

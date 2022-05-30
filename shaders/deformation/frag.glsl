@@ -16,12 +16,13 @@ uniform sampler2D image_texture;
 uniform sampler2D image_texture_1;
 
 uniform vec3 light = vec3(1.0, 1.0, 1.0);
+uniform float rotat;
 
 uniform vec3 color = vec3(1.0, 1.0, 1.0); // Unifor color of the object
 uniform float alpha = 1.0f; // alpha coefficient
 uniform float Ka = 0.4; // Ambient coefficient
-uniform float Kd = 0.8; // Diffuse coefficient
-uniform float Ks = 0.4f;// Specular coefficient
+uniform float Kd = 0.6; // Diffuse coefficient
+uniform float Ks = 0.6f;// Specular coefficient
 uniform float specular_exp = 64.0; // Specular exponent
 uniform bool use_texture = true;
 uniform bool texture_inverse_y = false;
@@ -33,7 +34,8 @@ void main()
 	if (gl_FrontFacing == false) {
 		N = -N;
 	}
-	vec3 L = normalize(light-fragment.position);
+	vec3 lsun = { 150 * cos(3* rotat),0,150 * sin(3* rotat) };
+	vec3 L = normalize(lsun-fragment.position);
 
 	float diffuse = max(dot(N,L),0.0);
 	float specular = 0.0;
@@ -41,6 +43,7 @@ void main()
 		vec3 R = reflect(-L,N);
 		vec3 V = normalize(fragment.eye-fragment.position);
 		specular = pow( max(dot(R,V),0.0), specular_exp );
+	if(sin(3* rotat)<=0.1f) specular=10*sin(3* rotat)*specular;
 	}
 
 
@@ -53,7 +56,10 @@ void main()
 		color_image_texture=vec4(1.0,1.0,1.0,1.0);
 	}
 	vec3 color_object  = fragment.color * color * color_image_texture.rgb;
-	vec3 color_shading = (Ka + Kd * diffuse) * color_object + Ks * specular * vec3(1.0, 1.0, 1.0);
+	float modif;
+	if(sin(3*rotat)<0.2) modif = 0.2;
+	else modif=sin(3*rotat);
+	vec3 color_shading = (Ka + Kd * diffuse * modif) * color_object + Ks * specular * vec3(1.0, 1.0, 1.0);
 	
 
 

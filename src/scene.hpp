@@ -36,6 +36,7 @@ struct scene_structure {
 	cgp::mesh_drawable tree;
 	cgp::mesh_drawable quad;
 	cgp::mesh_drawable sun;
+	cgp::mesh_drawable boat;
 	cgp::skybox_drawable skybox;
 
 	std::vector<cgp::vec3> tree_position;
