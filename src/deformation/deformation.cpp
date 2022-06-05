@@ -8,7 +8,6 @@ void opengl_uniform(GLuint shader, scene_environment_with_shader_deformation con
 	opengl_uniform(shader, scene_environment_basic_camera_spherical_coords(environment));
 
 	// Send the light and time as uniforms 
-	opengl_uniform(shader, "light", environment.light, false);
 	opengl_uniform(shader, "time", environment.t, false);
 	opengl_uniform(shader, "rotat", environment.rotat, false);
 	// Note: the 3rd parameter is set to false so that there is no warning if the environment is used with a shader that doesn't expect light and time uniform variable.

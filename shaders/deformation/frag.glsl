@@ -15,7 +15,6 @@ layout(location=0) out vec4 FragColor;
 uniform sampler2D image_texture;
 uniform sampler2D image_texture_1;
 
-uniform vec3 light = vec3(1.0, 1.0, 1.0);
 uniform float rotat;
 
 uniform vec3 color = vec3(1.0, 1.0, 1.0); // Unifor color of the object
@@ -23,7 +22,7 @@ uniform float alpha = 1.0f; // alpha coefficient
 uniform float Ka = 0.4; // Ambient coefficient
 uniform float Kd = 0.6; // Diffuse coefficient
 uniform float Ks = 0.6f;// Specular coefficient
-uniform float specular_exp = 64.0; // Specular exponent
+uniform float specular_exp = 50.0; // Specular exponent
 uniform bool use_texture = true;
 uniform bool texture_inverse_y = false;
 

@@ -7,9 +7,8 @@
 */
 struct scene_environment_with_shader_deformation : cgp::scene_environment_basic_camera_spherical_coords
 {
-	cgp::vec3 light; // position of the light
 	float t;         // The time is sent to the shader to compute a procedural deformation
-	float rotat;
+	float rotat;    // Angle of the sun
 
 	void update(float t); // function to be called in the scene display - update the time t and the light position
 };

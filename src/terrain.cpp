@@ -19,8 +19,7 @@ float evaluate_terrain_height(float x, float y,float terrain_length)
 }
 
 float evaluate_ocean_height(float x, float y, float terrain_length) {
-    float const noise = noise_perlin({ x / terrain_length + 0.5f,y / terrain_length + 0.5f }, 4, 1.f, 3.f);
-    return (1 - std::sin( x/10 + y/10)) * noise/2 +3;
+    return (1 - 1.5f*std::sin((x+y)/25)) + 3;
 }
 
 mesh create_ocean_mesh(int N, float terrain_length)

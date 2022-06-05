@@ -19,7 +19,6 @@ uniform sampler2D image_texture;
 uniform sampler2D image_texture_1;
 
 // Uniform values - must be send from the C++ code
-uniform vec3 light; // position of the light
 uniform float rotat;
 
 // Shape color
